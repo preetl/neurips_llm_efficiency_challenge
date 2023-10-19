@@ -6,20 +6,28 @@ WORKDIR /submission
 
 # Copy the specific file into the container at /submission
 COPY /lit-gpt/ /submission/
-
+COPY ./lora_download.py /submission/lora_download.py
 # Setup server requriements
 COPY ./fast_api_requirements.txt fast_api_requirements.txt
 RUN pip install --no-cache-dir --upgrade -r fast_api_requirements.txt
 
 RUN apt-get update && apt-get install -y git
-# Install any needed packages specified in requirements.txt that come from lit-gpt plus some optionals
-RUN pip install -r requirements.txt huggingface_hub sentencepiece tokenizers bitsandbytes scipy
 
+# Install any needed packages specified in requirements.txt that come from lit-gpt plus some optionals
+RUN git clone https://github.com/Lightning-AI/lit-gpt.git
+RUN pip install -r lit-gpt/requirements.txt  huggingface_hub sentencepiece tokenizers bitsandbytes scipy
 # some huggingface_hub versions require that the target dir exists
 RUN mkdir -p checkpoints/openlm-research/open_llama_3b
 # get open-llama weights: https://github.com/Lightning-AI/lit-gpt/blob/main/tutorials/download_openllama.md
 RUN python scripts/download.py --repo_id openlm-research/open_llama_3b
 RUN python scripts/convert_hf_checkpoint.py --checkpoint_dir checkpoints/openlm-research/open_llama_3b
+
+RUN python lora_download.py
+
+RUN python scripts/merge_lora.py \
+  --checkpoint_dir "checkpoints/openlm-research/open_llama_3b" \
+  --lora_path "open-llama-3b/lit_model_lora_finetuned.pth" \
+  --out_dir "checkpoints/openlm-research/open_llama_3b"
 
 # Copy over single file server
 COPY ./main.py /submission/main.py
