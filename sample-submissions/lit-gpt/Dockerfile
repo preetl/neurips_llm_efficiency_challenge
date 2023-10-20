@@ -19,7 +19,7 @@ RUN pip install -r lit-gpt/requirements.txt  huggingface_hub sentencepiece token
 # some huggingface_hub versions require that the target dir exists
 RUN mkdir -p checkpoints/meta-llama/Llama-2-7b-hf
 # get open-llama weights: https://github.com/Lightning-AI/lit-gpt/blob/main/tutorials/download_openllama.md
-RUN python scripts/download.py --repo_id meta-llama/Llama-2-7b-hf
+RUN python scripts/download.py --repo_id meta-llama/Llama-2-7b-hf --access_token=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
 RUN python scripts/convert_hf_checkpoint.py --checkpoint_dir checkpoints/meta-llama/Llama-2-7b-hf
 
 RUN python lora_download.py
