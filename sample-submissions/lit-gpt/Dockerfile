@@ -17,17 +17,17 @@ RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/Lightning-AI/lit-gpt.git
 RUN pip install -r lit-gpt/requirements.txt  huggingface_hub sentencepiece tokenizers bitsandbytes scipy
 # some huggingface_hub versions require that the target dir exists
-RUN mkdir -p checkpoints/openlm-research/open_llama_3b
+RUN mkdir -p checkpoints/meta-llama/Llama-2-7b-hf
 # get open-llama weights: https://github.com/Lightning-AI/lit-gpt/blob/main/tutorials/download_openllama.md
-RUN python scripts/download.py --repo_id openlm-research/open_llama_3b
-RUN python scripts/convert_hf_checkpoint.py --checkpoint_dir checkpoints/openlm-research/open_llama_3b
+RUN python scripts/download.py --repo_id meta-llama/Llama-2-7b-hf
+RUN python scripts/convert_hf_checkpoint.py --checkpoint_dir checkpoints/meta-llama/Llama-2-7b-hf
 
 RUN python lora_download.py
 
 RUN python scripts/merge_lora.py \
-  --checkpoint_dir "checkpoints/openlm-research/open_llama_3b" \
-  --lora_path "open-llama-3b/lit_model_lora_finetuned.pth" \
-  --out_dir "checkpoints/openlm-research/open_llama_3b"
+  --checkpoint_dir "checkpoints/meta-llama/Llama-2-7b-hf" \
+  --lora_path "llama-2-7B/lit_model_lora_finetuned.pth" \
+  --out_dir "checkpoints/meta-llama/Llama-2-7b-hf"
 
 # Copy over single file server
 COPY ./main.py /submission/main.py
