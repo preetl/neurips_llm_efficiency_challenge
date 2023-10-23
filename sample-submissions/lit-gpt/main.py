@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 quantize = "bnb.nf4-dq"  # 4-bit NormalFloat with Double-Quantization (see QLoRA paper)
-checkpoint_dir = Path("checkpoints/meta-llama/Llama-2-7b-hf")
+checkpoint_dir = Path("checkpoints/mistralai/Mistral-7B-v0.1")
 precision = "bf16-true"  # weights and data in bfloat16 precision
 
 fabric = L.Fabric(devices=1, accelerator="cuda", precision=precision)
