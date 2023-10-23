@@ -17,17 +17,17 @@ RUN apt-get update && apt-get install -y git
 RUN git clone https://github.com/Lightning-AI/lit-gpt.git
 RUN pip install -r lit-gpt/requirements.txt  huggingface_hub sentencepiece tokenizers bitsandbytes scipy
 # some huggingface_hub versions require that the target dir exists
-RUN mkdir -p checkpoints/meta-llama/Llama-2-7b-hf
+RUN mkdir -p checkpoints/mistralai/Mistral-7B-v0.1
 # get open-llama weights: https://github.com/Lightning-AI/lit-gpt/blob/main/tutorials/download_openllama.md
-RUN python scripts/download.py --repo_id meta-llama/Llama-2-7b-hf --access_token=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
-RUN python scripts/convert_hf_checkpoint.py --checkpoint_dir checkpoints/meta-llama/Llama-2-7b-hf
+RUN python scripts/download.py --repo_id mistralai/Mistral-7B-v0.1 
+RUN python scripts/convert_hf_checkpoint.py --checkpoint_dir checkpoints/mistralai/Mistral-7B-v0.1
 
 RUN python lora_download.py
 
 RUN python scripts/merge_lora.py \
-  --checkpoint_dir "checkpoints/meta-llama/Llama-2-7b-hf" \
-  --lora_path "llama-2-7B/lit_model_lora_finetuned.pth" \
-  --out_dir "checkpoints/meta-llama/Llama-2-7b-hf"
+  --checkpoint_dir "checkpoints/mistralai/Mistral-7B-v0.1" \
+  --lora_path "mistral-7B/lit_model_lora_finetuned.pth" \
+  --out_dir "checkpoints/mistralai/Mistral-7B-v0.1"
 
 # Copy over single file server
 COPY ./main.py /submission/main.py
